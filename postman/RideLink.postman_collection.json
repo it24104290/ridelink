@@ -1,0 +1,899 @@
+{
+  "info": {
+    "_postman_id": "ridelink-collection-v1",
+    "name": "RideLink Microservices API Collection",
+    "description": "Comprehensive Postman test collection for the 4 RideLink Spring Boot microservices covering all required workflows and negative scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Account Service (Port 8081)",
+      "item": [
+        {
+          "name": "1.1 Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"adminToken\", jsonData.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@ridelink.local\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/login",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Login as Passenger",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"passengerToken\", jsonData.token);",
+                  "pm.environment.set(\"passengerId\", jsonData.accountId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"passenger@ridelink.local\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/login",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Login as Driver",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"driverToken\", jsonData.token);",
+                  "pm.environment.set(\"driverId\", jsonData.accountId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"driver@ridelink.local\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/login",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Register New Passenger",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Kasun Bandara\",\n  \"email\": \"kasun{{$randomInt}}@ridelink.local\",\n  \"password\": \"Password123!\",\n  \"phone\": \"0771234567\",\n  \"role\": \"PASSENGER\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/register",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Get Passenger Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{accountUrl}}/api/accounts/me",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "accounts", "me"]
+            }
+          }
+        },
+        {
+          "name": "1.6 Update Passenger Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Amal Perera Updated\",\n  \"phone\": \"0779998877\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/accounts/me",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "accounts", "me"]
+            }
+          }
+        },
+        {
+          "name": "1.7 Admin List All Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{accountUrl}}/api/accounts",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "accounts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Driver & Vehicle Service (Port 8082)",
+      "item": [
+        {
+          "name": "2.1 Upsert Driver Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicle\": {\n    \"make\": \"Toyota\",\n    \"model\": \"Prius\",\n    \"color\": \"Silver\",\n    \"registrationNumber\": \"CAB-8899\",\n    \"vehicleType\": \"CAR\"\n  },\n  \"serviceArea\": \"Colombo\",\n  \"available\": true,\n  \"currentLocation\": {\n    \"placeName\": \"Colombo Fort\",\n    \"latitude\": 6.9344,\n    \"longitude\": 79.8428\n  }\n}"
+            },
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Update Vehicle Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"make\": \"Honda\",\n  \"model\": \"Grace\",\n  \"color\": \"Pearl White\",\n  \"registrationNumber\": \"WP-CBA-9900\",\n  \"vehicleType\": \"HYBRID_SEDAN\"\n}"
+            },
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me/vehicle",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me", "vehicle"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Update Driver Simulated Location",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placeName\": \"Kollupitiya Junction\",\n  \"latitude\": 6.9147,\n  \"longitude\": 79.8530\n}"
+            },
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me/location",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me", "location"]
+            }
+          }
+        },
+        {
+          "name": "2.4 Update Driver Availability Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": true\n}"
+            },
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me/availability",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me", "availability"]
+            }
+          }
+        },
+        {
+          "name": "2.5 Get Driver Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me"]
+            }
+          }
+        },
+        {
+          "name": "2.6 Get Driver Vehicle Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/me/vehicle",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "me", "vehicle"]
+            }
+          }
+        },
+        {
+          "name": "2.7 Retrieve Eligible Available Drivers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{driverUrl}}/api/drivers/available?serviceArea=Colombo&latitude=6.9344&longitude=79.8428",
+              "host": ["{{driverUrl}}"],
+              "path": ["api", "drivers", "available"],
+              "query": [
+                {
+                  "key": "serviceArea",
+                  "value": "Colombo"
+                },
+                {
+                  "key": "latitude",
+                  "value": "6.9344"
+                },
+                {
+                  "key": "longitude",
+                  "value": "79.8428"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Fare & Payment Service (Port 8084)",
+      "item": [
+        {
+          "name": "3.1 Request Fare Estimate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": \"sample-ride-01\",\n  \"pickup\": {\n    \"placeName\": \"Colombo Fort\",\n    \"latitude\": 6.9344,\n    \"longitude\": 79.8428\n  },\n  \"destination\": {\n    \"placeName\": \"Mount Lavinia Beach\",\n    \"latitude\": 6.8375,\n    \"longitude\": 79.8647\n  }\n}"
+            },
+            "url": {
+              "raw": "{{fareUrl}}/api/fares/estimate",
+              "host": ["{{fareUrl}}"],
+              "path": ["api", "fares", "estimate"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Calculate Final Fare",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": \"sample-ride-01\",\n  \"pickup\": {\n    \"placeName\": \"Colombo Fort\",\n    \"latitude\": 6.9344,\n    \"longitude\": 79.8428\n  },\n  \"destination\": {\n    \"placeName\": \"Mount Lavinia Beach\",\n    \"latitude\": 6.8375,\n    \"longitude\": 79.8647\n  }\n}"
+            },
+            "url": {
+              "raw": "{{fareUrl}}/api/fares/calculate",
+              "host": ["{{fareUrl}}"],
+              "path": ["api", "fares", "calculate"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Record Simulated Payment Directly",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"paymentId\", jsonData.paymentId);",
+                  "pm.environment.set(\"receiptNumber\", jsonData.receiptNumber);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": \"direct-test-ride\",\n  \"amount\": 850.50,\n  \"method\": \"CARD\",\n  \"currency\": \"LKR\"\n}"
+            },
+            "url": {
+              "raw": "{{fareUrl}}/api/payments",
+              "host": ["{{fareUrl}}"],
+              "path": ["api", "payments"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Retrieve Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{fareUrl}}/api/payments/{{paymentId}}",
+              "host": ["{{fareUrl}}"],
+              "path": ["api", "payments", "{{paymentId}}"]
+            }
+          }
+        },
+        {
+          "name": "3.5 Retrieve Receipt by Receipt Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{fareUrl}}/api/receipts/{{receiptNumber}}",
+              "host": ["{{fareUrl}}"],
+              "path": ["api", "receipts", "{{receiptNumber}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Ride Management Service - Complete End-to-End Workflow (Port 8083)",
+      "item": [
+        {
+          "name": "4.1 Passenger Requests Ride (Auto-match Driver & Estimate Fare)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"rideId\", jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup\": {\n    \"placeName\": \"Colombo Fort\",\n    \"latitude\": 6.9344,\n    \"longitude\": 79.8428\n  },\n  \"destination\": {\n    \"placeName\": \"Galle Face Green\",\n    \"latitude\": 6.9271,\n    \"longitude\": 79.8440\n  },\n  \"serviceArea\": \"Colombo\",\n  \"autoAssignDriver\": true\n}"
+            },
+            "url": {
+              "raw": "{{rideUrl}}/api/rides",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides"]
+            }
+          }
+        },
+        {
+          "name": "4.2 Driver Accepts Assigned Ride",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/accept",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "accept"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Driver Starts Ride",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/start",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "start"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Driver Completes Ride",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/complete",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Passenger Pays for Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethod\": \"CARD\"\n}"
+            },
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/pay",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "pay"]
+            }
+          }
+        },
+        {
+          "name": "4.6 View Completed Ride Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}"]
+            }
+          }
+        },
+        {
+          "name": "4.7 Passenger Ride History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/passenger/me",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "passenger", "me"]
+            }
+          }
+        },
+        {
+          "name": "4.8 Driver Ride History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/driver/me",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "driver", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Negative & Failure Scenarios",
+      "item": [
+        {
+          "name": "5.1 Negative: Self-Register as ADMIN (Expect 403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Hacker Admin\",\n  \"email\": \"hacker@attack.local\",\n  \"password\": \"Password123!\",\n  \"phone\": \"0779998877\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/register",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Negative: Invalid Login Password (Expect 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401 Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"passenger@ridelink.local\",\n  \"password\": \"WrongPassword!\"\n}"
+            },
+            "url": {
+              "raw": "{{accountUrl}}/api/auth/login",
+              "host": ["{{accountUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Negative: Unauthorized Role Action (Passenger accepting ride) (Expect 403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/accept",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "accept"]
+            }
+          }
+        },
+        {
+          "name": "5.4 Negative: Invalid Status Transition (Start completed ride) (Expect 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/start",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "start"]
+            }
+          }
+        },
+        {
+          "name": "5.5 Negative: Cancel Already Completed Ride (Expect 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Changed mind too late\"\n}"
+            },
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/cancel",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "5.6 Negative: Failed Simulated Payment (Method DECLINED) (Expect 402/400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is error\", function () {",
+                  "    pm.expect([400, 402]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{passengerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethod\": \"DECLINED\"\n}"
+            },
+            "url": {
+              "raw": "{{rideUrl}}/api/rides/{{rideId}}/pay",
+              "host": ["{{rideUrl}}"],
+              "path": ["api", "rides", "{{rideId}}", "pay"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
