@@ -38,7 +38,7 @@ public class DriverServiceClient implements DriverClient {
 
     public List<ExternalDriverDto> findEligibleDrivers(String serviceArea, double latitude, double longitude) {
         try {
-            String url = UriComponentsBuilder.fromHttpUrl(driverServiceUrl + "/api/drivers/available")
+            String url = UriComponentsBuilder.fromUriString(driverServiceUrl + "/api/drivers/available")
                     .queryParam("serviceArea", serviceArea)
                     .queryParam("latitude", latitude)
                     .queryParam("longitude", longitude)
