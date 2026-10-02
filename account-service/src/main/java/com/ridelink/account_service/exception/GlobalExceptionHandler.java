@@ -29,7 +29,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleOther(Exception ex, HttpServletRequest request) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request.getRequestURI());
+        ex.printStackTrace();
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error: " + ex.getMessage(), request.getRequestURI());
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message, String path) {

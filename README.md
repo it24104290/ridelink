@@ -7,10 +7,14 @@ RideLink is a backend microservices solution for a fictional ride-sharing platfo
 ## 1. Team & Microservice Ownership
 
 | # | Microservice | Primary Owner | Port | Database (MongoDB) | Minimum Responsibility |
-|---|---|---|---|---|---|
-| **1** | **Account Service** | Member 1 | `8081` | `ridelink_account` | Passenger & driver registration; login and token issuance (JWT); role management; profile viewing/updating; status management. |
-| **2** | **Driver & Vehicle Service** | Member 2 | `8082` | `ridelink_driver` | Driver operational profile; vehicle details; availability status; service area; simulated location; retrieval of eligible available drivers. |
-| **3** | **Ride Management Service** | Member 3 | `8083` | `ridelink_ride` | Ride request creation; pickup/destination; driver assignment; ride status lifecycle (requested, assigned, accepted, in-progress, completed, cancelled); ride retrieval. |
+
+
+| **1** | **Account Service** | Member 1 | `8081` | `ridelink_account` | Passenger & driver registration; login and token issuance (JWT); role management; profile viewing/updating; status management. 
+
+| **2** | **Driver & Vehicle Service** | Member 2 | `8082` | `ridelink_driver` | Driver operational profile; vehicle details; availability status; service area; simulated location; retrieval of eligible available drivers. 
+
+| **3** | **Ride Management Service** | Member 3 | `8083` | `ridelink_ride` | Ride request creation; pickup/destination; driver assignment; ride status lifecycle (requested, assigned, accepted, in-progress, completed, cancelled); ride retrieval. 
+
 | **4** | **Fare & Payment Service** | Member 4 | `8084` | `ridelink_fare` | Fare estimation; final fare calculation using documented rule (`FARE-RULE-V1`); simulated payment recording; payment status; receipt generation & retrieval. |
 
 ---
