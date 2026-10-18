@@ -41,6 +41,21 @@ class DriverServiceTest {
     }
 
     @Test
+    void driversWithoutLocationAreReturnedAfterLocatedDrivers() {
+        DriverProfile withoutLocation = new DriverProfile();
+        withoutLocation.setAccountId("unknown-location");
+        withoutLocation.setAvailable(true);
+        DriverProfile located = profile("near", 6.93, 79.84);
+        when(repository.findByAvailableTrue()).thenReturn(List.of(withoutLocation, located));
+
+        var result = driverService.findEligible(null, 6.9344, 79.8428);
+
+        assertEquals(2, result.size());
+        assertEquals("near", result.get(0).accountId());
+        assertEquals("unknown-location", result.get(1).accountId());
+    }
+
+    @Test
     void matcherComputesPositiveDistance() {
         DriverMatcher matcher = new DriverMatcher();
         double km = matcher.distanceKm(6.9271, 79.8612, 6.9147, 79.9730);
