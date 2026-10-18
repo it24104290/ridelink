@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -76,6 +77,40 @@ class AccountServiceTest {
 
         ApiException ex = assertThrows(ApiException.class, () -> accountService.register(request));
         assertEquals(HttpStatus.FORBIDDEN, ex.getStatus());
+    }
+
+    @Test
+    void registerRejectsDuplicateEmailWithoutSavingAccount() {
+        RegisterRequest request = new RegisterRequest(
+                "Jane Doe", "jane@ridelink.local", "Password123!", "0771112233", Role.PASSENGER);
+        when(accountRepository.existsByEmail("jane@ridelink.local")).thenReturn(true);
+
+        ApiException ex = assertThrows(ApiException.class, () -> accountService.register(request));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatus());
+        verify(accountRepository, never()).save(any(Account.class));
+        verify(passwordEncoder, never()).encode(anyString());
+    }
+
+    @Test
+    void registerNormalizesEmailBeforeCheckingAndSaving() {
+        RegisterRequest request = new RegisterRequest(
+                "Jane Doe", "  Jane@RideLink.local  ", "Password123!", "0771112233", Role.PASSENGER);
+        when(accountRepository.existsByEmail("jane@ridelink.local")).thenReturn(false);
+        when(passwordEncoder.encode("Password123!")).thenReturn("encodedHash");
+        when(jwtService.generateToken(any(), anyString(), anyString())).thenReturn("mockJwt");
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> {
+            Account saved = invocation.getArgument(0);
+            saved.setId("acc-jane-001");
+            return saved;
+        });
+
+        var response = accountService.register(request);
+
+        assertEquals("jane@ridelink.local", response.email());
+        verify(accountRepository).existsByEmail("jane@ridelink.local");
+        verify(accountRepository).save(org.mockito.ArgumentMatchers.argThat(account ->
+                "jane@ridelink.local".equals(account.getEmail())));
     }
 
     @Test
