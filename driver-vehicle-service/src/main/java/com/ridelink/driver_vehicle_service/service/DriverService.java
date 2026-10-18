@@ -86,10 +86,14 @@ public class DriverService {
             return candidates.stream().map(this::toResponse).toList();
         }
         return candidates.stream()
-                .sorted(Comparator.comparingDouble(driver -> matcher.distanceKm(
-                        latitude, longitude,
-                        driver.getCurrentLocation().getLatitude(),
-                        driver.getCurrentLocation().getLongitude())))
+                .sorted(Comparator.comparingDouble(driver -> {
+                    GeoLocation location = driver.getCurrentLocation();
+                    if (location == null) {
+                        return Double.POSITIVE_INFINITY;
+                    }
+                    return matcher.distanceKm(
+                            latitude, longitude, location.getLatitude(), location.getLongitude());
+                }))
                 .map(this::toResponse)
                 .toList();
     }
